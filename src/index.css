@@ -1,0 +1,202 @@
+/* ─────────────────────────────────────────
+   VECTRA — Global Design System
+   Tailwind v4 + Custom CSS Variables
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ── Tailwind v4 Token Registration ── */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Semantic color tokens → map to CSS vars */
+  --color-base:          var(--bg-base);
+  --color-surface:       var(--bg-surface);
+  --color-surface-2:     var(--bg-surface-2);
+  --color-primary:       var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
+  --color-accent:        var(--accent);
+  --color-main:          var(--text-main);
+  --color-muted:         var(--text-muted);
+  --color-subtle:        var(--text-subtle);
+  --color-border:        var(--border-soft);
+  --color-border-strong: var(--border-strong);
+  --color-danger:        var(--danger);
+  --color-success:       var(--success);
+  --color-warning:       var(--warning);
+
+  /* Radius */
+  --radius-xl:    0.75rem;
+  --radius-2xl:   1rem;
+  --radius-bento: 1.25rem;
+  --radius-pill:  9999px;
+
+  /* Shadows */
+  --shadow-card:   0 1px 3px 0 rgba(0,0,0,0.4), 0 1px 2px -1px rgba(0,0,0,0.4);
+  --shadow-glow:   0 0 20px rgba(99,102,241,0.25);
+  --shadow-modal:  0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* ── Dark Mode Variant ── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────
+   CSS VARIABLES — Light / Dark themes
+───────────────────────────────────────── */
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* Backgrounds */
+    --bg-base:      #0d0f18;
+    --bg-surface:   #131627;
+    --bg-surface-2: #1a1d2e;
+
+    /* Text */
+    --text-main:   #e8eaf6;
+    --text-muted:  #8b92b8;
+    --text-subtle: #4f5585;
+
+    /* Brand */
+    --primary:       #6366f1;
+    --primary-hover: #818cf8;
+    --primary-muted: rgba(99,102,241,0.15);
+    --accent:        #a78bfa;
+
+    /* Status */
+    --danger:  #f87171;
+    --success: #34d399;
+    --warning: #fbbf24;
+
+    /* Borders */
+    --border-soft:   rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+  }
+
+  /* Light mode override (class-based) */
+  .light {
+    color-scheme: light;
+    --bg-base:      #f1f5f9;
+    --bg-surface:   #ffffff;
+    --bg-surface-2: #f8fafc;
+    --text-main:    #0f172a;
+    --text-muted:   #64748b;
+    --text-subtle:  #94a3b8;
+    --border-soft:   rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.12);
+    --primary-muted: rgba(99,102,241,0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+
+  body {
+    @apply bg-base text-main antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* ── Custom Scrollbar ── */
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+
+  /* ── Selection ── */
+  ::selection { background: var(--primary-muted); color: var(--text-main); }
+
+  /* ── Focus visible ── */
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+}
+
+/* ─────────────────────────────────────────
+   UTILITY CLASSES
+───────────────────────────────────────── */
+@layer utilities {
+  /* Glass card */
+  .glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-soft);
+  }
+
+  .glass-strong {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-strong);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow effect */
+  .glow { box-shadow: var(--shadow-glow); }
+
+  /* Sidebar width */
+  .sidebar-width { width: 260px; }
+  .content-with-sidebar { margin-left: 260px; }
+
+  /* Kanban column */
+  .kanban-col {
+    min-height: 480px;
+    flex: 1;
+    min-width: 260px;
+    max-width: 340px;
+  }
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+  50%       { box-shadow: 0 0 20px 4px rgba(99,102,241,0.3); }
+}
+
+@layer utilities {
+  .animate-fade-in      { animation: fadeIn 0.25s ease both; }
+  .animate-slide-in     { animation: slideInLeft 0.3s ease both; }
+  .animate-scale-in     { animation: scaleIn 0.2s ease both; }
+  .animate-spin-custom  { animation: spin 0.8s linear infinite; }
+  .animate-pulse-glow   { animation: pulse-glow 2s ease-in-out infinite; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-surface-2) 50%, var(--bg-surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+/* ── Native form element overrides ─────────────────────────────────────── */
+@layer base {
+  select, input[type="date"] {
+    color-scheme: dark;
+  }
+  select option {
+    background: var(--bg-surface-2);
+    color: var(--text-main);
+  }
+}
