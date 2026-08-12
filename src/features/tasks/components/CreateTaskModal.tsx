@@ -5,7 +5,6 @@ import { Input } from '../../../components/ui/Input';
 import { Textarea } from '../../../components/ui/Input';
 import { useCreateTask, useUpdateTask, useDeleteTask } from '../hooks/useTasks';
 import { useWorkspaceMembers } from '../../workspaces/hooks/useWorkspaces';
-import { useWorkspaceStore } from '../../../store/useWorkspaceStore';
 import type { Task, TaskStatus, TaskPriority } from '../../../types';
 
 interface Props {

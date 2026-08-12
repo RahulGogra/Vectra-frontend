@@ -3,7 +3,6 @@ import { Settings, Trash2, Save } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { useUpdateWorkspace, useDeleteWorkspace } from '../hooks/useWorkspaces';
-import { useWorkspaceStore } from '../../../store/useWorkspaceStore';
 import type { Workspace } from '../../../types';
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 export const WorkspaceSettings: React.FC<Props> = ({ workspace }) => {
   const [name, setName] = useState(workspace.name);
   const [confirmDelete, setConfirmDelete] = useState('');
-  const setActive = useWorkspaceStore((s) => s.setActiveWorkspaceId);
 
   const { mutate: update, isPending: updating } = useUpdateWorkspace();
   const { mutate: del, isPending: deleting } = useDeleteWorkspace();

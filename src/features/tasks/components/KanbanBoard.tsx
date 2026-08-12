@@ -17,7 +17,6 @@ import { CreateTaskModal } from './CreateTaskModal';
 import { useTasks, useUpdateBoard } from '../hooks/useTasks';
 import { Spinner } from '../../../components/ui/Spinner';
 import { Button } from '../../../components/ui/Button';
-import { PriorityBadge } from '../../../components/ui/Badge';
 import type { Task, TaskStatus, KanbanColumn as KanbanColType } from '../../../types';
 
 const COLUMNS: KanbanColType[] = [

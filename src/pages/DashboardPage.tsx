@@ -1,6 +1,6 @@
 import { useOutletContext } from 'react-router-dom';
 import {
-  FolderKanban, Users, CheckCircle2, Clock, AlertCircle, LayoutDashboard,
+  FolderKanban, CheckCircle2, Clock, AlertCircle, LayoutDashboard,
 } from 'lucide-react';
 import { useProjects } from '../features/projects/hooks/useProjects';
 import { useTasks } from '../features/tasks/hooks/useTasks';

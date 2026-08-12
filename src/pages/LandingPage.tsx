@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Zap, ArrowRight, Check, Menu, X,
-  LayoutDashboard, Users, Shield, Kanban,
+  Zap, ArrowRight, Check,
+  Users, Shield, Kanban,
   Sparkles, Globe, GitBranch, Star,
   ChevronRight, Play, Lock,
 } from 'lucide-react';
 import { HeroCanvas } from '../components/three/HeroCanvas';
+import { MarketingNav } from '../components/marketing/MarketingNav';
+import { MarketingFooter } from '../components/marketing/MarketingFooter';
 
 // ── Scroll-reveal hook ────────────────────────────────────────────────────
 function useReveal(threshold = 0.12) {
@@ -130,105 +132,9 @@ const KanbanMockup: React.FC = () => (
   </div>
 );
 
-// ── Navbar ─────────────────────────────────────────────────────────────────
-const Navbar: React.FC = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+// ── (Navbar replaced by shared <MarketingNav transparent> — see MarketingNav.tsx) ──
 
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 30);
-    window.addEventListener('scroll', h, { passive: true });
-    return () => window.removeEventListener('scroll', h);
-  }, []);
 
-  const navLinks = [
-    { label: 'Features', href: '#features' },
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'Pricing', href: '#pricing' },
-  ];
-
-  return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-      style={{
-        background: scrolled ? 'rgba(4,6,18,0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
-        padding: scrolled ? '12px 0' : '24px 0',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
-            <Zap className="h-4 w-4 text-white" />
-          </div>
-          <span className="font-bold text-white text-xl tracking-tight">Vectra</span>
-        </div>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              className="text-sm text-white/60 hover:text-white transition-colors"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-sm text-white/60 hover:text-white transition-colors px-4 py-2"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-              boxShadow: '0 0 20px rgba(99,102,241,0.35)',
-            }}
-          >
-            Start free <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden text-white/60 hover:text-white p-1"
-          onClick={() => setMobileOpen((v) => !v)}
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div
-          className="md:hidden px-6 py-5 space-y-4 animate-fade-in"
-          style={{ background: 'rgba(4,6,18,0.95)', borderTop: '1px solid rgba(255,255,255,0.06)' }}
-        >
-          {navLinks.map(({ label, href }) => (
-            <a key={label} href={href} className="block text-sm text-white/60 hover:text-white py-1">
-              {label}
-            </a>
-          ))}
-          <div className="flex gap-3 pt-2">
-            <Link to="/login"    className="flex-1 text-center border border-white/10 text-white/70 text-sm py-2.5 rounded-xl">Sign in</Link>
-            <Link to="/register" className="flex-1 text-center bg-indigo-600 text-white text-sm font-medium py-2.5 rounded-xl">Get started</Link>
-          </div>
-        </div>
-      )}
-    </nav>
-  );
-};
 
 // ── Features ───────────────────────────────────────────────────────────────
 const FEATURES = [
@@ -329,14 +235,15 @@ const STATS = [
 
 // ── Landing Page ──────────────────────────────────────────────────────────
 const LandingPage: React.FC = () => {
-  const featuresReveal = useReveal();
-  const stepsReveal    = useReveal();
-  const priceReveal    = useReveal();
-  const testReveal     = useReveal();
+  const { ref: featuresRef, visible: featuresVisible } = useReveal();
+  const { ref: stepsRef, visible: stepsVisible }       = useReveal();
+  const { ref: priceRef, visible: priceVisible }       = useReveal();
+  const { ref: testRef, visible: testVisible }         = useReveal();
+
 
   return (
     <div className="min-h-screen" style={{ background: '#04060f', color: '#e8eaf6' }}>
-      <Navbar />
+      <MarketingNav transparent />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -449,8 +356,8 @@ const LandingPage: React.FC = () => {
       {/* ── FEATURES ─────────────────────────────────────────────────────── */}
       <section id="features" className="py-32 px-6">
         <div
-          ref={featuresReveal.ref}
-          className={`max-w-7xl mx-auto transition-all duration-700 ${featuresReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          ref={featuresRef}
+          className={`max-w-7xl mx-auto transition-all duration-700 ${featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full text-xs font-semibold"
@@ -508,8 +415,8 @@ const LandingPage: React.FC = () => {
           style={{ background: 'radial-gradient(ellipse, #6366f1, transparent)' }} />
 
         <div
-          ref={stepsReveal.ref}
-          className={`max-w-5xl mx-auto transition-all duration-700 ${stepsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          ref={stepsRef}
+          className={`max-w-5xl mx-auto transition-all duration-700 ${stepsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-5">Up and running in minutes</h2>
@@ -609,8 +516,8 @@ const LandingPage: React.FC = () => {
       {/* ── TESTIMONIALS ─────────────────────────────────────────────────── */}
       <section className="py-32 px-6">
         <div
-          ref={testReveal.ref}
-          className={`max-w-6xl mx-auto transition-all duration-700 ${testReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          ref={testRef}
+          className={`max-w-6xl mx-auto transition-all duration-700 ${testVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-1 mb-4">
@@ -656,8 +563,8 @@ const LandingPage: React.FC = () => {
       {/* ── PRICING ──────────────────────────────────────────────────────── */}
       <section id="pricing" className="py-32 px-6">
         <div
-          ref={priceReveal.ref}
-          className={`max-w-4xl mx-auto transition-all duration-700 ${priceReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          ref={priceRef}
+          className={`max-w-4xl mx-auto transition-all duration-700 ${priceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-5">Simple, honest pricing</h2>
@@ -770,58 +677,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer
-        className="py-16 px-6 border-t"
-        style={{ borderColor: 'rgba(255,255,255,0.06)' }}
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
-            {/* Brand */}
-            <div className="max-w-xs">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-8 rounded-xl flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                  <Zap className="h-4 w-4 text-white" />
-                </div>
-                <span className="font-bold text-white text-lg">Vectra</span>
-              </div>
-              <p className="text-sm text-white/40 leading-relaxed">
-                The Kanban-first project management platform for modern SaaS teams.
-              </p>
-            </div>
-
-            {/* Links */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
-              <div>
-                <p className="font-semibold text-white mb-3">Product</p>
-                {['Features', 'Pricing', 'Changelog', 'Roadmap'].map((l) => (
-                  <a key={l} href="#" className="block text-white/40 hover:text-white py-1 transition-colors">{l}</a>
-                ))}
-              </div>
-              <div>
-                <p className="font-semibold text-white mb-3">Company</p>
-                {['About', 'Blog', 'Careers', 'Press'].map((l) => (
-                  <a key={l} href="#" className="block text-white/40 hover:text-white py-1 transition-colors">{l}</a>
-                ))}
-              </div>
-              <div>
-                <p className="font-semibold text-white mb-3">Legal</p>
-                {['Privacy', 'Terms', 'Security', 'Cookie policy'].map((l) => (
-                  <a key={l} href="#" className="block text-white/40 hover:text-white py-1 transition-colors">{l}</a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t text-xs text-white/30"
-            style={{ borderColor: 'rgba(255,255,255,0.05)' }}
-          >
-            <p>© 2026 Vectra Inc. All rights reserved.</p>
-            <p>Built with ❤️ using React, Django & Three.js</p>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 };

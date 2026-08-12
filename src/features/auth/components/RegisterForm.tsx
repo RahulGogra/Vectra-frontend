@@ -25,8 +25,10 @@ export const RegisterForm: React.FC = () => {
   };
 
   // Parse Django field errors from the API response
-  const apiErrors: Record<string, string[]> = isError && (error as any)?.response?.data
-    ? (error as any).response.data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const err = error as any;
+  const apiErrors: Record<string, string[]> = isError && err?.response?.data
+    ? err.response.data
     : {};
 
   return (
