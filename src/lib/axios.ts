@@ -64,7 +64,9 @@ api.interceptors.response.use(
         }
       } else {
         // No refresh token available, force logout
-        window.location.href = '/login';
+        if(!window.location.href.includes('/login')){
+            window.location.href = '/login';
+        }
       }
     }
 
