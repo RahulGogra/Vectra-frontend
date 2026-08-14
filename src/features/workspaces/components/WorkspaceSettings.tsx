@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Settings, Trash2, Save } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { useUpdateWorkspace, useDeleteWorkspace } from '../hooks/useWorkspaces';
 import type { Workspace } from '../../../types';
+import { Settings, Trash2, Save, Users, UserPlus } from 'lucide-react';
+import { useInviteMember } from '../hooks/useWorkspaces';
+import { useWorkspaceMembers } from '../hooks/useWorkspaces';
 
 interface Props {
   workspace: Workspace;
@@ -15,6 +17,8 @@ export const WorkspaceSettings: React.FC<Props> = ({ workspace }) => {
 
   const { mutate: update, isPending: updating } = useUpdateWorkspace();
   const { mutate: del, isPending: deleting } = useDeleteWorkspace();
+  const { mutate: inviteMember, isPending: inviting } = useInviteMember();
+  const { data: members = [] } = useWorkspaceMembers(workspace.id);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +52,60 @@ export const WorkspaceSettings: React.FC<Props> = ({ workspace }) => {
             </Button>
           </div>
         </form>
+      </section>
+
+            {/* Members Section */}
+      <section className="glass rounded-2xl p-6 border border-border">
+        <div className="flex items-center gap-2 mb-5">
+          <Users className="h-4 w-4 text-primary" />
+          <h2 className="text-base font-semibold text-main">Manage Members</h2>
+        </div>
+        
+        {/* Invite Form */}
+        <form 
+          className="flex gap-3 mb-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const emailInput = form.elements.namedItem('email') as HTMLInputElement;
+            inviteMember({ workspaceId: workspace.id, email: emailInput.value }, {
+              onSuccess: () => {
+                emailInput.value = '';
+                alert('Invite sent!');
+              },
+              onError: (err: any) => alert(err.response?.data?.error || 'Failed to send invite')
+            });
+          }}
+        >
+          <div className="flex-1">
+            <Input id="email" type="email" placeholder="Email address" required />
+          </div>
+          <Button type="submit" loading={inviting} icon={<UserPlus className="h-4 w-4" />}>
+            Invite
+          </Button>
+        </form>
+
+        {/* Member List */}
+        <div className="space-y-3">
+          {members.map((member) => (
+            <div key={member.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-2">
+              <div>
+                <p className="text-sm font-medium text-main">{member.user.first_name || member.user.email.split('@')[0]}</p>
+                <p className="text-xs text-muted">{member.user.email}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                {member.status === 'pending' && (
+                  <span className="text-[10px] font-semibold bg-amber-500/20 text-amber-500 px-2 py-1 rounded-full uppercase">
+                    Pending
+                  </span>
+                )}
+                <span className="text-[10px] font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full uppercase">
+                  {member.role}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Danger Zone */}

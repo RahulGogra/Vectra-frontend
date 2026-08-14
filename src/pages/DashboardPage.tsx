@@ -1,11 +1,14 @@
 import { useOutletContext } from 'react-router-dom';
 import {
-  FolderKanban, CheckCircle2, Clock, AlertCircle, LayoutDashboard,
+  FolderKanban, CheckCircle2, Clock, AlertCircle, LayoutDashboard, Check, X
 } from 'lucide-react';
 import { useProjects } from '../features/projects/hooks/useProjects';
 import { useTasks } from '../features/tasks/hooks/useTasks';
 import { Spinner } from '../components/ui/Spinner';
+import { Button } from '../components/ui/Button';
 import type { Workspace } from '../types';
+// 1. Import the new hooks
+import { useWorkspaceInvites, useRespondToInvite } from '../features/workspaces/hooks/useWorkspaces';
 
 interface OutletCtx { workspace: Workspace; }
 
@@ -41,8 +44,48 @@ const DashboardPage: React.FC = () => {
     done:        tasks.filter((t) => t.status === 'done').length,
   };
 
+  // 2. Fetch the invites and setup the response mutation
+  const { data: invites = [] } = useWorkspaceInvites();
+  const { mutate: respondToInvite, isPending: responding } = useRespondToInvite();
+
   return (
     <div className="p-8">
+      {/* 3. Render Invitation Banners */}
+      {invites.length > 0 && (
+        <div className="mb-8 space-y-3">
+          {invites.map((invite) => (
+            <div key={invite.workspace_id} className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-center justify-between animate-fade-in">
+              <div>
+                <h3 className="text-amber-500 font-semibold text-sm mb-1">Workspace Invitation</h3>
+                <p className="text-muted text-sm">
+                  You have been invited to join <span className="text-main font-medium">{invite.workspace_name}</span> as a {invite.role}.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  disabled={responding}
+                  onClick={() => respondToInvite({ workspaceId: invite.workspace_id, accept: false })}
+                  icon={<X className="h-4 w-4" />}
+                >
+                  Decline
+                </Button>
+                <Button 
+                  size="sm"
+                  disabled={responding}
+                  onClick={() => respondToInvite({ workspaceId: invite.workspace_id, accept: true })}
+                  icon={<Check className="h-4 w-4" />}
+                  className="bg-amber-500 hover:bg-amber-600 text-white border-none"
+                >
+                  Accept
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Page header */}
       <div className="flex items-center gap-3 mb-8">
         <LayoutDashboard className="h-5 w-5 text-primary" />
@@ -55,71 +98,24 @@ const DashboardPage: React.FC = () => {
       {isLoading ? (
         <div className="flex justify-center py-16"><Spinner /></div>
       ) : (
-        <>
-          {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <StatCard
-              icon={<FolderKanban className="h-5 w-5 text-primary" />}
-              label="Total projects"
-              value={projects.length}
-              color="bg-primary/15"
-            />
-            <StatCard
-              icon={<Clock className="h-5 w-5 text-warning" />}
-              label="In progress"
-              value={stats.in_progress}
-              color="bg-warning/15"
-            />
-            <StatCard
-              icon={<AlertCircle className="h-5 w-5 text-accent" />}
-              label="In review"
-              value={stats.review}
-              color="bg-accent/15"
-            />
-            <StatCard
-              icon={<CheckCircle2 className="h-5 w-5 text-success" />}
-              label="Completed"
-              value={stats.done}
-              color="bg-success/15"
-            />
-          </div>
-
-          {/* Recent projects */}
-          <section>
-            <h2 className="text-base font-semibold text-main mb-4">Recent projects</h2>
-            {projects.length === 0 ? (
-              <div className="glass rounded-2xl p-10 border border-border text-center">
-                <FolderKanban className="h-10 w-10 text-muted mx-auto mb-3" />
-                <p className="text-main font-medium">No projects yet</p>
-                <p className="text-muted text-sm mt-1">
-                  Head to the Projects tab to create your first one.
-                </p>
-              </div>
-            ) : (
-              <div className="grid gap-3">
-                {projects.slice(0, 5).map((p) => (
-                  <div
-                    key={p.id}
-                    className="glass rounded-xl px-5 py-4 border border-border flex items-center gap-4 animate-fade-in"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
-                      <FolderKanban className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-main truncate">{p.name}</p>
-                      {p.description && (
-                        <p className="text-xs text-muted truncate">{p.description}</p>
-                      )}
-                    </div>
-                    <span className="text-xs text-subtle shrink-0">
-                      {new Date(p.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        </>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard 
+            icon={<AlertCircle className="h-5 w-5" />} 
+            label="To Do" value={stats.todo} color="bg-red-500/10 text-red-500" 
+          />
+          <StatCard 
+            icon={<Clock className="h-5 w-5" />} 
+            label="In Progress" value={stats.in_progress} color="bg-amber-500/10 text-amber-500" 
+          />
+          <StatCard 
+            icon={<FolderKanban className="h-5 w-5" />} 
+            label="In Review" value={stats.review} color="bg-indigo-500/10 text-indigo-500" 
+          />
+          <StatCard 
+            icon={<CheckCircle2 className="h-5 w-5" />} 
+            label="Completed" value={stats.done} color="bg-emerald-500/10 text-emerald-500" 
+          />
+        </div>
       )}
     </div>
   );

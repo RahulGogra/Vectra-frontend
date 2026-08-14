@@ -31,3 +31,20 @@ export const getWorkspaceMembers = async (workspaceId: string): Promise<Workspac
   });
   return data;
 };
+
+export const inviteWorkspaceMember = async (workspaceId: string, email: string): Promise<void> => {
+  await api.post(`/workspaces/${workspaceId}/invite/`, { email });
+};
+
+export const acceptWorkspaceInvite = async (workspaceId: string): Promise<void> => {
+  await api.post(`/workspaces/${workspaceId}/accept-invite/`);
+};
+
+export const declineWorkspaceInvite = async (workspaceId: string): Promise<void> => {
+  await api.post(`/workspaces/${workspaceId}/decline-invite/`);
+};
+
+export const getWorkspaceInvites = async (): Promise<any[]> => {
+  const { data } = await api.get('/workspaces/invites/');
+  return data;
+};

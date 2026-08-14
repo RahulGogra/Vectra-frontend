@@ -5,6 +5,10 @@ import {
   updateWorkspace,
   deleteWorkspace,
   getWorkspaceMembers,
+  inviteWorkspaceMember,
+  acceptWorkspaceInvite ,
+  declineWorkspaceInvite ,
+  getWorkspaceInvites,
 } from '../api/workspacesApi';
 import { useWorkspaceStore } from '../../../store/useWorkspaceStore';
 import type { CreateWorkspacePayload } from '../../../types';
@@ -62,3 +66,32 @@ export const useDeleteWorkspace = () => {
     },
   });
 };
+
+export const useInviteMember = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ workspaceId, email }: { workspaceId: string; email: string }) => 
+      inviteWorkspaceMember(workspaceId, email),
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: workspaceKeys.members(variables.workspaceId) });
+    },
+  });
+};
+
+export const useRespondToInvite = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ workspaceId, accept }: { workspaceId: string; accept: boolean }) => 
+      accept ? acceptWorkspaceInvite(workspaceId) : declineWorkspaceInvite(workspaceId),
+    onSuccess: () => {
+      // Invalidate everything so the workspace list and members update
+      qc.invalidateQueries({ queryKey: workspaceKeys.all });
+    },
+  });
+};
+
+export const useWorkspaceInvites = () =>
+  useQuery({ 
+    queryKey: ['workspaces', 'invites'], 
+    queryFn: getWorkspaceInvites 
+  });

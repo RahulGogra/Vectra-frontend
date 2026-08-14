@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Textarea } from '../../../components/ui/Input';
 import { useCreateTask, useUpdateTask, useDeleteTask } from '../hooks/useTasks';
 import { useWorkspaceMembers } from '../../workspaces/hooks/useWorkspaces';
+import { useCurrentUser } from '../../auth/hooks/useAuth';
 import type { Task, TaskStatus, TaskPriority } from '../../../types';
 
 interface Props {
@@ -41,10 +42,25 @@ export const CreateTaskModal: React.FC<Props> = ({
   const [assignee, setAssignee]     = useState<string>(task?.assignee ?? '');
   const [dueDate, setDueDate]       = useState(task?.due_date ?? '');
 
+  useEffect(() => {
+    if (open) {
+      setTitle(task?.title ?? '');
+      setDescription(task?.description ?? '');
+      setStatus(task?.status ?? defaultStatus);
+      setPriority(task?.priority ?? 'medium');
+      setAssignee(task?.assignee ?? '');
+      setDueDate(task?.due_date ?? '');
+    }
+  }, [open, task, defaultStatus]);
+
   const { mutate: create, isPending: creating } = useCreateTask();
   const { mutate: update, isPending: updating } = useUpdateTask(projectId);
   const { mutate: del,    isPending: deleting } = useDeleteTask(projectId);
   const { data: members = [] } = useWorkspaceMembers(workspaceId);
+  const { data: user } = useCurrentUser();
+
+  const currentUserRole = members.find((m) => m.user.id === user?.id)?.role;
+  const canDelete = currentUserRole === 'admin' || currentUserRole === 'owner';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,7 +179,7 @@ export const CreateTaskModal: React.FC<Props> = ({
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-2">
-          {isEditing ? (
+          {isEditing && canDelete ? (
             <Button
               type="button"
               variant="danger"
