@@ -1,7 +1,7 @@
 import { NavLink, useParams } from 'react-router-dom';
 import {
   LayoutDashboard, FolderKanban, Users, Settings,
-  LogOut, ChevronDown, Plus, Zap, Bell, Check
+  LogOut, ChevronDown, Plus, Zap, Bell
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useWorkspaces } from '../../features/workspaces/hooks/useWorkspaces';
