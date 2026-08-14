@@ -5,6 +5,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
+  plan?: string;
 }
 
 export type WorkspaceRole = 'owner' | 'admin' | 'member';
@@ -23,6 +24,7 @@ export interface WorkspaceMember {
   user: User;
   role: WorkspaceRole;
   joined_at: string;
+  status?: string;
 }
 
 export interface Project {

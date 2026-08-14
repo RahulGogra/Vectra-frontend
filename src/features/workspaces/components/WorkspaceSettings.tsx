@@ -9,7 +9,7 @@ import { useWorkspaceMembers } from '../hooks/useWorkspaces';
 import { useCurrentUser } from '../../auth/hooks/useAuth';
 import { CreditCard, CheckCircle2, Zap } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { api } from '../../../lib/api';
+import { api } from '../../../lib/axios';
 
 interface Props {
   workspace: Workspace;

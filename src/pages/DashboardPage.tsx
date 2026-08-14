@@ -1,6 +1,6 @@
 import { useOutletContext } from 'react-router-dom';
 import {
-  FolderKanban, CheckCircle2, Clock, AlertCircle, LayoutDashboard, Check, X, TrendingUp, Users, Activity
+  FolderKanban, CheckCircle2, AlertCircle, LayoutDashboard, Check, X, TrendingUp, Activity
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -219,7 +219,7 @@ const DashboardPage: React.FC = () => {
             <div className="glass-premium rounded-3xl p-6 border-white/5 flex flex-col">
               <h3 className="text-lg font-bold text-main mb-6">Recent Projects</h3>
               <div className="flex-1 space-y-4">
-                {projects.slice(0, 4).map((p, i) => (
+                {projects.slice(0, 4).map((p) => (
                   <div key={p.id} className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/5">
                     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <LayoutDashboard className="h-5 w-5 text-primary" />

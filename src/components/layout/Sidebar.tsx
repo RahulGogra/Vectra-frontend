@@ -1,13 +1,15 @@
 import { NavLink, useParams } from 'react-router-dom';
 import {
   LayoutDashboard, FolderKanban, Users, Settings,
-  LogOut, ChevronDown, Plus, Zap,
+  LogOut, ChevronDown, Plus, Zap, Bell, Check
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWorkspaces } from '../../features/workspaces/hooks/useWorkspaces';
 import { useWorkspaceStore } from '../../store/useWorkspaceStore';
 import { useCurrentUser, useLogout } from '../../features/auth/hooks/useAuth';
 import { CreateWorkspaceModal } from '../../features/workspaces/components/CreateWorkspaceModal';
+import { useNotificationStore } from '../../store/useNotificationStore';
+import { NotificationToast } from '../ui/NotificationToast';
 
 interface NavItem {
   to: string;
@@ -23,6 +25,17 @@ export const Sidebar: React.FC = () => {
   const logout = useLogout();
   const [wsMenuOpen, setWsMenuOpen] = useState(false);
   const [createWsOpen, setCreateWsOpen] = useState(false);
+  const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+
+  const token = localStorage.getItem('accessToken');
+  const { connect, disconnect, unreadCount, notifications, markAllAsRead } = useNotificationStore();
+
+  useEffect(() => {
+    if (token) {
+      connect(token);
+    }
+    return () => disconnect();
+  }, [token, connect, disconnect]);
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId) ?? workspaces[0];
   const slug = workspaceSlug ?? activeWorkspace?.slug ?? '';
@@ -123,8 +136,32 @@ export const Sidebar: React.FC = () => {
         </nav>
 
         {/* User footer */}
-        <div className="px-3 py-3 border-t border-border">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-xl">
+        <div className="px-3 py-3 border-t border-border flex flex-col gap-2 relative">
+          {/* Notifications Dropdown */}
+          {notifMenuOpen && (
+            <div className="absolute bottom-16 left-3 w-72 rounded-xl border border-border bg-surface shadow-modal py-2 z-50 animate-scale-in">
+              <div className="px-3 pb-2 border-b border-border flex justify-between items-center">
+                <span className="font-bold text-main">Notifications</span>
+                {unreadCount > 0 && (
+                  <button onClick={() => markAllAsRead()} className="text-xs text-primary hover:underline">Mark all read</button>
+                )}
+              </div>
+              <div className="max-h-60 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <p className="text-xs text-muted text-center py-4">No notifications yet.</p>
+                ) : (
+                  notifications.map(n => (
+                    <div key={n.id} className={`px-3 py-2 text-sm border-b border-white/5 ${!n.is_read ? 'bg-primary/5' : ''}`}>
+                      <p className="font-semibold text-main text-xs">{n.title}</p>
+                      <p className="text-muted text-xs line-clamp-2">{n.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl">
             <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
               <span className="text-xs font-bold text-primary">{initials}</span>
             </div>
@@ -134,10 +171,22 @@ export const Sidebar: React.FC = () => {
               </p>
               <p className="text-xs text-muted truncate">{user?.email}</p>
             </div>
+            
+            <button
+              onClick={() => setNotifMenuOpen(!notifMenuOpen)}
+              title="Notifications"
+              className="relative text-muted hover:text-primary transition-colors p-1.5 rounded-lg hover:bg-surface-2"
+            >
+              <Bell className="h-4 w-4" />
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-danger animate-pulse border border-surface"></span>
+              )}
+            </button>
+
             <button
               onClick={logout}
               title="Logout"
-              className="text-muted hover:text-danger transition-colors p-1 rounded-lg hover:bg-surface-2"
+              className="text-muted hover:text-danger transition-colors p-1.5 rounded-lg hover:bg-surface-2"
             >
               <LogOut className="h-4 w-4" />
             </button>
@@ -145,6 +194,7 @@ export const Sidebar: React.FC = () => {
         </div>
       </aside>
 
+      <NotificationToast />
       <CreateWorkspaceModal open={createWsOpen} onClose={() => setCreateWsOpen(false)} />
     </>
   );
