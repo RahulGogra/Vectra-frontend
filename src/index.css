@@ -49,29 +49,29 @@
     color-scheme: dark;
 
     /* Backgrounds */
-    --bg-base:      #0d0f18;
-    --bg-surface:   #131627;
-    --bg-surface-2: #1a1d2e;
+    --bg-base:      #030712; /* Deep space black/navy */
+    --bg-surface:   #111827; /* Rich dark navy */
+    --bg-surface-2: #1f2937; /* Lighter navy for cards */
 
     /* Text */
-    --text-main:   #e8eaf6;
-    --text-muted:  #8b92b8;
-    --text-subtle: #4f5585;
+    --text-main:   #f8fafc;
+    --text-muted:  #94a3b8;
+    --text-subtle: #475569;
 
     /* Brand */
-    --primary:       #6366f1;
-    --primary-hover: #818cf8;
-    --primary-muted: rgba(99,102,241,0.15);
-    --accent:        #a78bfa;
+    --primary:       #8b5cf6; /* Vibrant violet */
+    --primary-hover: #a78bfa;
+    --primary-muted: rgba(139, 92, 246, 0.15);
+    --accent:        #3b82f6; /* Electric blue */
 
     /* Status */
-    --danger:  #f87171;
-    --success: #34d399;
-    --warning: #fbbf24;
+    --danger:  #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
 
     /* Borders */
-    --border-soft:   rgba(255,255,255,0.06);
-    --border-strong: rgba(255,255,255,0.12);
+    --border-soft:   rgba(255,255,255,0.04);
+    --border-strong: rgba(255,255,255,0.08);
   }
 
   /* Light mode override (class-based) */
@@ -116,15 +116,26 @@
 @layer utilities {
   /* Glass card */
   .glass {
-    background: rgba(255,255,255,0.03);
+    background: rgba(17, 24, 39, 0.4);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-soft);
   }
 
   .glass-strong {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(20px);
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--border-strong);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-premium {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 16px 40px -8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
   }
 
   /* Gradient text */

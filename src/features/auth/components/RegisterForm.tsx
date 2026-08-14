@@ -38,6 +38,9 @@ export const RegisterForm: React.FC = () => {
       <div className="absolute bottom-1/3 -right-32 h-72 w-72 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-md animate-fade-in">
+        <Link to="/" className="absolute -top-12 left-0 text-sm font-medium text-muted hover:text-main flex items-center gap-1 transition-colors">
+          ← Back to Vectra
+        </Link>
         {/* Brand header */}
         <div className="flex flex-col items-center mb-8">
           <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center shadow-glow mb-4">

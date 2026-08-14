@@ -6,6 +6,10 @@ import type { Workspace } from '../../../types';
 import { Settings, Trash2, Save, Users, UserPlus } from 'lucide-react';
 import { useInviteMember } from '../hooks/useWorkspaces';
 import { useWorkspaceMembers } from '../hooks/useWorkspaces';
+import { useCurrentUser } from '../../auth/hooks/useAuth';
+import { CreditCard, CheckCircle2, Zap } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { api } from '../../../lib/api';
 
 interface Props {
   workspace: Workspace;
@@ -19,6 +23,17 @@ export const WorkspaceSettings: React.FC<Props> = ({ workspace }) => {
   const { mutate: del, isPending: deleting } = useDeleteWorkspace();
   const { mutate: inviteMember, isPending: inviting } = useInviteMember();
   const { data: members = [] } = useWorkspaceMembers(workspace.id);
+  const { data: user } = useCurrentUser();
+
+  const { mutate: upgrade, isPending: upgrading } = useMutation({
+    mutationFn: async () => {
+      const res = await api.post('/payments/create-checkout-session/');
+      return res.data;
+    },
+    onSuccess: (data) => {
+      window.location.href = data.url;
+    }
+  });
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +120,40 @@ export const WorkspaceSettings: React.FC<Props> = ({ workspace }) => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Billing & Plan */}
+      <section className="glass rounded-2xl p-6 border border-border">
+        <div className="flex items-center gap-2 mb-5">
+          <CreditCard className="h-4 w-4 text-primary" />
+          <h2 className="text-base font-semibold text-main">Billing & Plan</h2>
+        </div>
+        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-surface-2 p-5 rounded-xl border border-white/5">
+          <div>
+            <h3 className="text-lg font-bold text-main mb-1">
+              {user?.plan === 'pro' ? 'Pro Plan' : 'Free Plan'}
+            </h3>
+            <p className="text-sm text-muted max-w-md">
+              {user?.plan === 'pro' 
+                ? 'You are on the Pro plan. You can create unlimited workspaces and projects.' 
+                : 'You are currently on the Free plan, which limits you to a single workspace. Upgrade to Pro for unlimited workspaces.'}
+            </p>
+          </div>
+          {user?.plan === 'pro' ? (
+            <div className="flex items-center gap-2 text-success font-medium bg-success/10 px-4 py-2 rounded-lg border border-success/20">
+              <CheckCircle2 className="h-5 w-5" /> Active Subscription
+            </div>
+          ) : (
+            <Button 
+              onClick={() => upgrade()} 
+              loading={upgrading}
+              icon={<Zap className="h-4 w-4" />}
+              className="bg-gradient-to-r from-primary to-accent border-none shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:scale-105 transition-transform"
+            >
+              Upgrade to Pro (₹1,500)
+            </Button>
+          )}
         </div>
       </section>
 

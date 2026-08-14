@@ -41,9 +41,9 @@ export const TaskCard: React.FC<Props> = ({ task, onClick }) => {
       ref={setNodeRef}
       style={style}
       className={[
-        'glass rounded-xl p-4 border border-border cursor-pointer',
-        'hover:border-border-strong hover:shadow-card transition-all duration-200 group',
-        isDragging ? 'ring-2 ring-primary shadow-glow z-50' : '',
+        'glass-premium rounded-xl p-4 border cursor-pointer',
+        'hover:border-primary/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(99,102,241,0.2)]',
+        isDragging ? 'ring-2 ring-primary shadow-[0_0_40px_rgba(99,102,241,0.4)] z-50 rotate-3 scale-105' : 'border-white/5',
       ].join(' ')}
       onClick={() => onClick(task)}
     >
@@ -83,9 +83,9 @@ export const TaskCard: React.FC<Props> = ({ task, onClick }) => {
         {initials ? (
           <div
             title={`${task.assignee_details!.first_name} ${task.assignee_details!.last_name}`}
-            className="h-6 w-6 rounded-full bg-primary/25 border border-primary/40 flex items-center justify-center"
+            className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-accent border border-white/20 flex items-center justify-center shadow-lg"
           >
-            <span className="text-[10px] font-bold text-primary">{initials}</span>
+            <span className="text-[10px] font-bold text-white tracking-wider">{initials}</span>
           </div>
         ) : (
           <span className="flex items-center gap-1 text-xs text-subtle">

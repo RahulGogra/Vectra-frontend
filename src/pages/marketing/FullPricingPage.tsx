@@ -1,6 +1,7 @@
 import { MarketingLayout } from '../../components/marketing/MarketingLayout';
 import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const FAQS = [
   { q: 'Can I use Vectra for free?', a: 'Yes! Our Free plan is completely free forever. It includes 1 workspace and up to 3 projects, which is perfect for individuals or small teams just getting started.' },
@@ -12,6 +13,8 @@ const FAQS = [
 ];
 
 export default function FullPricingPage() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   return (
     <MarketingLayout>
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
@@ -36,9 +39,15 @@ export default function FullPricingPage() {
                 <li key={f} className="flex items-center gap-3 text-white/80"><Check className="h-5 w-5 text-indigo-400" /> {f}</li>
               ))}
             </ul>
-            <Link to="/register" className="w-full py-4 text-center rounded-xl border border-white/20 hover:bg-white/5 transition-colors font-semibold">
-              Get Started Free
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/app" className="w-full inline-block py-4 text-center rounded-xl border border-white/20 hover:bg-white/5 transition-colors font-semibold">
+                Go to Workspace
+              </Link>
+            ) : (
+              <Link to="/register" className="w-full inline-block py-4 text-center rounded-xl border border-white/20 hover:bg-white/5 transition-colors font-semibold">
+                Get Started Free
+              </Link>
+            )}
           </div>
 
           <div className="rounded-3xl p-8 border border-indigo-500/30 bg-gradient-to-b from-indigo-500/10 to-transparent flex flex-col relative shadow-[0_0_30px_rgba(99,102,241,0.1)]">
@@ -54,9 +63,15 @@ export default function FullPricingPage() {
                 <li key={f} className="flex items-center gap-3 text-white/80"><Check className="h-5 w-5 text-indigo-400" /> {f}</li>
               ))}
             </ul>
-            <Link to="/register" className="w-full py-4 text-center rounded-xl text-white font-semibold shadow-lg transition-transform hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-              Upgrade to Pro
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/app" className="w-full inline-block py-4 text-center rounded-xl text-white font-semibold shadow-lg transition-transform hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                Upgrade from Workspace
+              </Link>
+            ) : (
+              <Link to="/register" className="w-full inline-block py-4 text-center rounded-xl text-white font-semibold shadow-lg transition-transform hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                Upgrade to Pro
+              </Link>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Zap, ArrowRight, Menu, X } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
 
 interface MarketingNavProps {
   /** Start transparent and fade-in on scroll (use on hero pages only) */
@@ -17,6 +18,7 @@ export const MarketingNav: React.FC<MarketingNavProps> = ({ transparent = false 
   const [scrolled, setScrolled]       = useState(!transparent);
   const [mobileOpen, setMobileOpen]   = useState(false);
   const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   useEffect(() => {
     if (!transparent) return;
@@ -75,26 +77,42 @@ export const MarketingNav: React.FC<MarketingNavProps> = ({ transparent = false 
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-sm transition-colors px-4 py-2"
-            style={{ color: 'rgba(255,255,255,0.55)' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'white'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)'; }}
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/register"
-            id="nav-get-started"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:scale-105"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-              boxShadow: '0 0 20px rgba(99,102,241,0.35)',
-            }}
-          >
-            Get started <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              to="/app"
+              id="nav-go-dashboard"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                boxShadow: '0 0 20px rgba(99,102,241,0.35)',
+              }}
+            >
+              Go to Dashboard <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm transition-colors px-4 py-2"
+                style={{ color: 'rgba(255,255,255,0.55)' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'white'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)'; }}
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                id="nav-get-started"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-all hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  boxShadow: '0 0 20px rgba(99,102,241,0.35)',
+                }}
+              >
+                Get started <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -120,8 +138,14 @@ export const MarketingNav: React.FC<MarketingNavProps> = ({ transparent = false 
             </Link>
           ))}
           <div className="flex gap-3 pt-2">
-            <Link to="/login"    className="flex-1 text-center border text-sm py-2.5 rounded-xl" style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>Sign in</Link>
-            <Link to="/register" className="flex-1 text-center text-white text-sm font-medium py-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>Get started</Link>
+            {isAuthenticated ? (
+              <Link to="/app" className="flex-1 text-center text-white text-sm font-medium py-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>Go to Dashboard</Link>
+            ) : (
+              <>
+                <Link to="/login"    className="flex-1 text-center border text-sm py-2.5 rounded-xl" style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>Sign in</Link>
+                <Link to="/register" className="flex-1 text-center text-white text-sm font-medium py-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>Get started</Link>
+              </>
+            )}
           </div>
         </div>
       )}

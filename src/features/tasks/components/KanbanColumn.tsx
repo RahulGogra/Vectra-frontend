@@ -45,10 +45,10 @@ export const KanbanColumn: React.FC<Props> = ({
       <div
         ref={setNodeRef}
         className={[
-          'flex flex-col gap-2.5 rounded-2xl p-2.5 min-h-[400px] transition-colors duration-150',
+          'flex flex-col gap-3 rounded-2xl p-3 min-h-[400px] transition-all duration-300',
           isOver
-            ? 'bg-primary/8 border border-dashed border-primary/40'
-            : 'bg-surface/30 border border-border/50',
+            ? 'glass-premium border-primary/50 shadow-[0_0_30px_rgba(99,102,241,0.15)] scale-[1.01]'
+            : 'bg-surface/30 border border-white/5 hover:border-white/10 hover:bg-surface/40',
         ].join(' ')}
       >
         <SortableContext
